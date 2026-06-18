@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Plum Desk</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;min-height:100vh}
+:root{
+  --plum-dark:#0d1b2a;
+  --plum-navy:#162032;
+  --plum-primary:#c0275a;
+  --plum-green:#3bb273;
+  --plum-border:rgba(0,0,0,0.1);
+  --plum-bg:#f5f4f8;
+  --plum-surface:#ffffff;
+  --plum-tag-bg:#fce8ef;
+  --plum-muted:#6b7280;
+  --color-text-primary:#1a1a2e;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--plum-bg);color:var(--color-text-primary);display:flex;flex-direction:column}
+
+/* TOPBAR */
+.topbar{background:var(--plum-dark);display:flex;align-items:center;padding:0 20px;height:48px;gap:24px;flex-shrink:0;position:sticky;top:0;z-index:100}
+.topbar-logo{display:flex;align-items:center;gap:8px;color:white;font-weight:700;font-size:17px}
+.topbar-nav a{color:rgba(255,255,255,0.7);font-size:13px;padding:4px 12px;border-radius:4px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.topbar-nav a:hover{color:white;background:rgba(255,255,255,0.1)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.corp-badge{background:rgba(255,255,255,0.15);color:white;font-size:12px;padding:4px 10px;border-radius:4px;display:flex;align-items:center;gap:5px}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--plum-primary);display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:600}
+
+/* BODY LAYOUT */
+.body-row{display:flex;flex:1;height:calc(100vh - 48px)}
+
+/* SIDEBAR */
+.sidebar{width:48px;background:var(--plum-navy);display:flex;flex-direction:column;align-items:center;padding:12px 0 0;flex-shrink:0;position:sticky;top:48px;height:calc(100vh - 48px)}
+.sidebar-top{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;width:100%}
+.sidebar a{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,0.5);text-decoration:none}
+.sidebar a:hover,.sidebar a.active{background:rgba(255,255,255,0.12);color:white}
+.sidebar-footer{width:100%;display:flex;flex-direction:column;align-items:center;padding-bottom:14px}
+.sidebar-divider{width:32px;height:0.5px;background:rgba(255,255,255,0.15);margin-bottom:10px}
+.help-btn{width:36px;height:36px;border-radius:50%;background:var(--plum-primary);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid rgba(255,255,255,0.15);transition:background 0.15s}
+.help-btn:hover{background:#d94478}
+.help-btn i{color:white;font-size:16px}
+
+/* CONTENT */
+.content-col{flex:1;display:flex;flex-direction:column;min-height:0;overflow-y:auto}
+.breadcrumb{padding:10px 24px;font-size:12px;color:var(--plum-muted);display:flex;align-items:center;gap:6px;background:var(--plum-surface);border-bottom:0.5px solid var(--plum-border);flex-shrink:0;position:sticky;top:0;z-index:90}
+.bc-link{cursor:pointer;color:var(--plum-muted)}.bc-link:hover{color:var(--plum-primary)}.bc-active{color:var(--plum-primary)}
+.main{padding:20px 24px;flex:1}
+
+/* PAGES */
+.home-page,.device-page{display:none}
+.home-page.active,.device-page.active{display:block}
+.page-title{font-size:20px;font-weight:600;margin-bottom:18px}
+.home-sub{font-size:13px;color:var(--plum-muted);margin-bottom:20px}
+
+/* DEVICE GRID */
+.device-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:14px}
+.device-card{background:var(--plum-surface);border:0.5px solid var(--plum-border);border-radius:12px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:border-color 0.15s,transform 0.1s;text-align:center}
+.device-card:hover{border-color:var(--plum-primary);transform:translateY(-2px)}
+.device-card .icon-wrap{width:52px;height:52px;border-radius:12px;background:var(--plum-tag-bg);display:flex;align-items:center;justify-content:center}
+.device-card .name{font-size:13px;font-weight:600;color:var(--color-text-primary)}
+
+/* FILTERS */
+.filter-bar{display:flex;align-items:flex-end;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.filter-group{display:flex;flex-direction:column;gap:4px}
+.filter-group label{font-size:11px;font-weight:700;color:var(--plum-muted);text-transform:uppercase;letter-spacing:0.04em}
+.dd-wrap{position:relative}
+.dd-btn{min-width:200px;background:var(--plum-surface);border:0.5px solid var(--plum-border);border-radius:8px;padding:7px 12px;font-size:13px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:8px;color:var(--color-text-primary)}
+.dd-btn:hover{border-color:var(--plum-primary)}
+.dd-panel{position:absolute;top:calc(100% + 4px);left:0;z-index:200;background:var(--plum-surface);border:0.5px solid var(--plum-border);border-radius:10px;min-width:240px;padding:8px;display:none;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+.dd-panel.open{display:block}
+.dd-search{width:100%;border:0.5px solid var(--plum-border);border-radius:6px;padding:6px 10px;font-size:12px;margin-bottom:6px;outline:none;color:var(--color-text-primary);background:var(--plum-bg)}
+.dd-actions{display:flex;gap:10px;padding:0 2px 6px;font-size:12px}
+.dd-actions span{cursor:pointer;color:var(--plum-primary);font-weight:500}
+.dd-actions span.clr{color:var(--plum-muted)}
+.dd-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--color-text-primary)}
+.dd-item:hover{background:var(--plum-tag-bg)}
+.dd-item input[type=checkbox]{accent-color:var(--plum-primary);width:14px;height:14px;flex-shrink:0}
+.view-btn{background:var(--plum-green);color:white;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px}
+.view-btn:hover{background:#2e9a62}
+
+/* TABLE TOOLBAR */
+.table-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.text-filter-wrap{display:flex;align-items:center;gap:6px;background:var(--plum-surface);border:0.5px solid var(--plum-border);border-radius:8px;padding:6px 10px;min-width:220px}
+.text-filter-wrap i{color:var(--plum-muted);font-size:15px}
+.text-filter-wrap input{border:none;outline:none;font-size:13px;background:transparent;color:var(--color-text-primary);width:100%}
+.result-count{font-size:12px;color:var(--plum-muted);margin-left:auto}
+
+/* TABLE */
+.table-wrap{background:var(--plum-surface);border:0.5px solid var(--plum-border);border-radius:12px;overflow:hidden;position:relative}
+.devices-table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
+.devices-table th{background:var(--plum-bg);padding:9px 10px;text-align:left;font-size:11px;font-weight:700;color:#3a3a3a;text-transform:uppercase;letter-spacing:0.04em;border-bottom:0.5px solid var(--plum-border);white-space:nowrap;cursor:pointer;user-select:none}
+.devices-table th:hover{color:var(--plum-primary)}
+.devices-table th.no-sort{cursor:default}
+.devices-table th.no-sort:hover{color:#3a3a3a}
+.col-sort-active{color:var(--plum-primary) !important}
+.sort-wrap{display:flex;align-items:center;gap:4px}
+.sort-icon{display:flex;flex-direction:column;gap:1px;opacity:0.3}
+.sort-icon.asc .arr-up,.sort-icon.desc .arr-down{opacity:1}
+.arr-up,.arr-down{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent}
+.arr-up{border-bottom:4px solid currentColor}
+.arr-down{border-top:4px solid currentColor}
+.devices-table td{padding:9px 10px;border-bottom:0.5px solid var(--plum-border);vertical-align:middle;word-break:break-word;color:var(--color-text-primary)}
+.devices-table tr:last-child td{border-bottom:none}
+.devices-table tr:hover td{background:#fdf8fb}
+
+/* SORT PANEL */
+.sort-panel{background:var(--plum-surface);border:0.5px solid var(--plum-border);border-radius:10px;padding:8px 0;min-width:190px;position:absolute;z-index:300;display:none;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+.sort-panel.open{display:block}
+.sp-item{padding:8px 14px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--color-text-primary)}
+.sp-item:hover{background:var(--plum-tag-bg)}
+.sp-item.active{color:var(--plum-primary);font-weight:500}
+.sp-sep{height:0.5px;background:var(--plum-border);margin:4px 0}
+.sp-filter-label{padding:6px 14px 4px;font-size:10px;font-weight:700;color:var(--plum-muted);text-transform:uppercase;letter-spacing:0.05em}
+.sp-filter-input{width:calc(100% - 20px);margin:0 10px 8px;border:0.5px solid var(--plum-border);border-radius:6px;padding:5px 8px;font-size:12px;background:var(--plum-bg);color:var(--color-text-primary);outline:none}
+
+/* BADGES & STATUS */
+.franchise-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
+.f-bojangles{background:#fff0e0;color:#b85c00}
+.f-biscuitville{background:#e8f0ff;color:#2b4db5}
+.f-cookout{background:#e8fff0;color:#1b7a3f}
+.f-mooyah{background:#fce8ef;color:#c0275a}
+.device-id{color:var(--plum-primary);font-weight:600;font-family:monospace;font-size:11.5px}
+.ip-code{font-family:monospace;font-size:11.5px;color:var(--plum-muted)}
+.status-online{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#1a7a42}
+.status-offline{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#c0392b}
+.dot-green{width:7px;height:7px;border-radius:50%;background:#3bb273;flex-shrink:0}
+.dot-red{width:7px;height:7px;border-radius:50%;background:#e74c3c;flex-shrink:0}
+
+/* ACTION BUTTONS */
+.btn-reboot,.btn-session{border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-weight:500;white-space:nowrap}
+.btn-reboot{border:0.5px solid rgba(0,0,0,0.12);background:white;color:#c07000}
+.btn-reboot:hover:not(:disabled){background:#fff8e6;border-color:#c07000}
+.btn-session{border:0.5px solid rgba(192,39,90,0.3);background:#fce8ef;color:#c0275a}
+.btn-session:hover:not(:disabled){background:#c0275a;color:white}
+.btn-reboot:disabled,.btn-session:disabled{opacity:0.35;cursor:not-allowed;pointer-events:none}
+.empty-state{text-align:center;padding:40px;color:var(--plum-muted);font-size:13px}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:9999}
+.toast-el{background:#0d1b2a;color:white;padding:10px 18px;border-radius:8px;font-size:13px;display:none;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,0.25)}
+.toast-el.show{display:flex}
+
+/* ── REMOTE SESSION OVERLAY ── */
+.rs-overlay{
+  display:none;
+  position:fixed;inset:0;z-index:5000;
+  flex-direction:column;
+  background:#111;
+}
+.rs-overlay.open{display:flex}
+
+/* session top bar */
+.rs-topbar{
+  background:#1a1a2a;
+  height:44px;
+  display:flex;align-items:center;
+  padding:0 16px;
+  gap:12px;
+  flex-shrink:0;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.rs-device-info{display:flex;flex-direction:column;gap:1px}
+.rs-device-name{color:white;font-size:13px;font-weight:600}
+.rs-device-meta{color:rgba(255,255,255,0.45);font-size:11px}
+.rs-topbar-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+.rs-session-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(59,178,115,0.15);
+  border:1px solid rgba(59,178,115,0.3);
+  color:#3bb273;
+  font-size:11px;font-weight:600;
+  padding:3px 10px;border-radius:20px;
+}
+.rs-session-dot{width:6px;height:6px;border-radius:50%;background:#3bb273;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.rs-terminate-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#c0392b;color:white;
+  border:none;border-radius:6px;
+  padding:5px 14px;font-size:12px;font-weight:600;
+  cursor:pointer;transition:background 0.15s;
+}
+.rs-terminate-btn:hover{background:#a93226}
+.rs-terminate-btn i{font-size:13px}
+
+/* confirm modal */
+.rs-confirm-backdrop{
+  display:none;position:fixed;inset:0;z-index:6000;
+  background:rgba(0,0,0,0.6);
+  align-items:center;justify-content:center;
+}
+.rs-confirm-backdrop.open{display:flex}
+.rs-confirm-box{
+  background:#1e2235;border-radius:12px;
+  padding:28px 28px 22px;
+  width:360px;
+  border:1px solid rgba(255,255,255,0.1);
+}
+.rs-confirm-icon{
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(192,57,43,0.15);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+}
+.rs-confirm-icon i{color:#e74c3c;font-size:22px}
+.rs-confirm-title{color:white;font-size:16px;font-weight:600;margin-bottom:6px}
+.rs-confirm-sub{color:rgba(255,255,255,0.5);font-size:13px;line-height:1.5;margin-bottom:22px}
+.rs-confirm-actions{display:flex;gap:10px;justify-content:flex-end}
+.rs-cancel-btn{background:rgba(255,255,255,0.08);color:white;border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:7px 18px;font-size:13px;font-weight:500;cursor:pointer}
+.rs-cancel-btn:hover{background:rgba(255,255,255,0.14)}
+.rs-confirm-terminate-btn{background:#c0392b;color:white;border:none;border-radius:7px;padding:7px 18px;font-size:13px;font-weight:600;cursor:pointer}
+.rs-confirm-terminate-btn:hover{background:#a93226}
+
+/* device screen area */
+.rs-screen{
+  flex:1;
+  background:#0a0a14;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+/* plum watermark */
+.rs-watermark{
+  position:absolute;left:-30px;bottom:-40px;
+  opacity:0.07;pointer-events:none;
+}
+/* simulated PIN screen */
+.rs-pin-screen{
+  display:flex;flex-direction:column;align-items:center;
+  gap:0;
+  width:100%;max-width:500px;
+  position:relative;z-index:2;
+}
+.rs-pin-header{
+  position:absolute;top:12px;right:16px;text-align:right;
+}
+.rs-pin-store-name{color:white;font-size:13px;font-weight:600}
+.rs-pin-store-id{color:rgba(255,255,255,0.5);font-size:12px;margin-top:2px}
+.rs-plum-logo{
+  display:flex;align-items:center;gap:10px;
+  position:absolute;top:12px;left:16px;
+  color:white;font-size:18px;font-weight:700;
+}
+.rs-pin-title{color:rgba(255,255,255,0.85);font-size:20px;font-weight:400;margin-bottom:24px;margin-top:60px}
+.rs-numpad{display:grid;grid-template-columns:repeat(3,80px);gap:8px;margin-bottom:10px}
+.rs-key{
+  width:80px;height:64px;
+  background:#2a2d3e;
+  border:none;border-radius:8px;
+  color:white;font-size:22px;font-weight:400;
+  cursor:pointer;transition:background 0.1s;
+  display:flex;align-items:center;justify-content:center;
+}
+.rs-key:hover{background:#353848}
+.rs-key:active{background:#3f4258}
+.rs-key.delete{color:#e67e22;font-size:14px;font-weight:600}
+.rs-key.clear-key{color:#5b9bd5;font-size:14px;font-weight:600}
+.rs-accept{
+  width:248px;height:50px;
+  background:#2a2d3e;border:none;border-radius:8px;
+  color:white;font-size:16px;font-weight:400;
+  cursor:pointer;margin-top:8px;transition:background 0.1s;
+}
+.rs-accept:hover{background:#353848}
+.rs-or{color:rgba(255,255,255,0.35);font-size:13px;margin:12px 0 10px}
+.rs-biometric{
+  display:flex;align-items:center;gap:0;
+  background:#2a2d3e;border-radius:30px;padding:8px 18px;gap:14px;
+}
+.rs-biometric i{color:rgba(255,255,255,0.7);font-size:22px}
+.rs-bio-sep{width:1px;height:22px;background:rgba(255,255,255,0.2)}
+.rs-bottom-bar{
+  position:absolute;bottom:0;left:0;right:0;
+  background:#1a1a2a;height:32px;
+  display:flex;align-items:center;padding:0 16px;
+  border-top:1px solid rgba(255,255,255,0.06);
+  font-size:11px;color:rgba(255,255,255,0.45);
+  justify-content:space-between;
+}
+.rs-helpdesk{
+  background:rgba(192,39,90,0.85);color:white;
+  border:none;border-radius:14px;
+  padding:3px 12px;font-size:11px;font-weight:500;cursor:pointer;
+}
+.rs-primary-badge{color:rgba(255,255,255,0.7);font-size:11px;font-weight:700;letter-spacing:0.05em}
+.rs-pin-dots{display:flex;gap:8px;margin-bottom:20px;min-height:16px}
+.rs-dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.8)}
+.rs-pin-input-row{display:flex;align-items:center;justify-content:center;margin-bottom:4px;min-height:20px}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2C9 2 6.5 4.5 6.5 7.5c0 2.5 1.5 4.5 3.7 5.3L8 21h8l-2.2-8.2c2.2-.8 3.7-2.8 3.7-5.3C17.5 4.5 15 2 12 2z" fill="#c0275a"/>
+    </svg>
+    plum
+  </div>
+  <div class="topbar-nav">
+    <a onclick="showHome()"><i class="ti ti-layout-grid"></i> My Apps ▾</a>
+  </div>
+  <div class="topbar-right">
+    <div class="corp-badge"><i class="ti ti-building"></i> Corporate ▾</div>
+    <i class="ti ti-settings" style="font-size:18px;color:rgba(255,255,255,0.6)"></i>
+    <div class="avatar">MK</div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="body-row">
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <a class="active" title="Home"><i class="ti ti-home" style="font-size:18px"></i></a>
+      <a title="Reports"><i class="ti ti-file-analytics" style="font-size:18px"></i></a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="sidebar-divider"></div>
+      <div class="help-btn" title="Help & Support">
+        <i class="ti ti-settings-2" style="color:white;font-size:16px"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-col">
+    <div class="breadcrumb" id="breadcrumb">
+      <span class="bc-link" onclick="showHome()">Dashboard</span>
+      <span>›</span>
+      <span class="bc-active">Plum Desk</span>
+    </div>
+
+    <div class="main">
+
+      <!-- HOME PAGE -->
+      <div class="home-page active" id="home-page">
+        <div class="page-title">Plum Desk</div>
+        <div class="home-sub">Select a device type to view and manage connected devices across your sites.</div>
+        <div class="device-grid" id="device-grid"></div>
+      </div>
+
+      <!-- DEVICE PAGE -->
+      <div class="device-page" id="device-page">
+        <div class="page-title" id="device-page-title">Plum POS</div>
+
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label>Franchise</label>
+            <div class="dd-wrap">
+              <div class="dd-btn" onclick="toggleDD(event,'franchise-panel')">
+                <span id="franchise-label">All Franchises</span>
+                <i class="ti ti-chevron-down" style="font-size:13px"></i>
+              </div>
+              <div class="dd-panel" id="franchise-panel" onclick="event.stopPropagation()">
+                <input class="dd-search" placeholder="Search franchises..." oninput="buildFranchiseList(this.value)"/>
+                <div class="dd-actions">
+                  <span onclick="selAllFranchises()">Select all</span>
+                  <span class="clr" onclick="clrFranchises()">Clear</span>
+                </div>
+                <div id="franchise-list"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <label>Store</label>
+            <div class="dd-wrap">
+              <div class="dd-btn" onclick="toggleDD(event,'store-panel')">
+                <span id="store-label">All Stores</span>
+                <i class="ti ti-chevron-down" style="font-size:13px"></i>
+              </div>
+              <div class="dd-panel" id="store-panel" onclick="event.stopPropagation()">
+                <input class="dd-search" placeholder="Search stores..." oninput="buildStoreList(this.value)"/>
+                <div class="dd-actions">
+                  <span onclick="selAllStores()">Select all</span>
+                  <span class="clr" onclick="clrStores()">Clear</span>
+                </div>
+                <div id="store-list"></div>
+              </div>
+            </div>
+          </div>
+
+          <button class="view-btn" onclick="applyFilter()">
+            <i class="ti ti-eye" style="font-size:14px"></i> View
+          </button>
+        </div>
+
+        <div class="table-toolbar">
+          <div class="text-filter-wrap">
+            <i class="ti ti-search"></i>
+            <input type="text" placeholder="Search..." id="text-filter" oninput="renderTable()"/>
+          </div>
+          <span class="result-count" id="result-count"></span>
+        </div>
+
+        <div class="table-wrap" id="table-wrap">
+          <table class="devices-table">
+            <thead id="table-head"></thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap">
+  <div class="toast-el" id="toast"></div>
+</div>
+
+<!-- ── REMOTE SESSION OVERLAY ── -->
+<div class="rs-overlay" id="rs-overlay">
+  <!-- Session top bar -->
+  <div class="rs-topbar">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2C9 2 6.5 4.5 6.5 7.5c0 2.5 1.5 4.5 3.7 5.3L8 21h8l-2.2-8.2c2.2-.8 3.7-2.8 3.7-5.3C17.5 4.5 15 2 12 2z" fill="#c0275a"/>
+    </svg>
+    <div class="rs-device-info">
+      <div class="rs-device-name" id="rs-device-name">DEV-3378-01 — Main POS Register 1</div>
+      <div class="rs-device-meta" id="rs-device-meta">Bojangles Corporate Lab &nbsp;·&nbsp; 192.168.1.101 &nbsp;·&nbsp; Plum POS</div>
+    </div>
+    <div class="rs-topbar-actions">
+      <div class="rs-session-badge">
+        <span class="rs-session-dot"></span> Live Session
+      </div>
+      <button class="rs-terminate-btn" onclick="askTerminate()">
+        <i class="ti ti-plug-x"></i> Terminate Session
+      </button>
+    </div>
+  </div>
+
+  <!-- Device screen -->
+  <div class="rs-screen">
+    <!-- Watermark -->
+    <div class="rs-watermark">
+      <svg width="420" height="420" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2C9 2 6.5 4.5 6.5 7.5c0 2.5 1.5 4.5 3.7 5.3L8 21h8l-2.2-8.2c2.2-.8 3.7-2.8 3.7-5.3C17.5 4.5 15 2 12 2z" fill="#6b3060"/>
+      </svg>
+    </div>
+
+    <!-- Plum logo top-left -->
+    <div class="rs-plum-logo">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2C9 2 6.5 4.5 6.5 7.5c0 2.5 1.5 4.5 3.7 5.3L8 21h8l-2.2-8.2c2.2-.8 3.7-2.8 3.7-5.3C17.5 4.5 15 2 12 2z" fill="#c0275a"/>
+      </svg>
+      plum
+    </div>
+
+    <!-- Store info top-right -->
+    <div class="rs-pin-header" id="rs-pin-header">
+      <div class="rs-pin-store-name">003378, Bojangles Corporate Lab</div>
+      <div class="rs-pin-store-id">3378</div>
+    </div>
+
+    <!-- PIN screen -->
+    <div class="rs-pin-screen">
+      <div class="rs-pin-title">Enter Pin</div>
+
+      <div class="rs-pin-dots" id="rs-pin-dots"></div>
+
+      <!-- Numpad -->
+      <div class="rs-numpad">
+        <button class="rs-key" onclick="pinKey('1')">1</button>
+        <button class="rs-key" onclick="pinKey('2')">2</button>
+        <button class="rs-key" onclick="pinKey('3')">3</button>
+        <button class="rs-key" onclick="pinKey('4')">4</button>
+        <button class="rs-key" onclick="pinKey('5')">5</button>
+        <button class="rs-key" onclick="pinKey('6')">6</button>
+        <button class="rs-key" onclick="pinKey('7')">7</button>
+        <button class="rs-key" onclick="pinKey('8')">8</button>
+        <button class="rs-key" onclick="pinKey('9')">9</button>
+        <button class="rs-key delete" onclick="pinDelete()">Delete</button>
+        <button class="rs-key" onclick="pinKey('0')">0</button>
+        <button class="rs-key clear-key" onclick="pinClear()">Clear</button>
+      </div>
+      <button class="rs-accept" onclick="pinAccept()">Accept</button>
+
+      <div class="rs-or">OR</div>
+      <div class="rs-biometric">
+        <i class="ti ti-fingerprint"></i>
+        <div class="rs-bio-sep"></div>
+        <i class="ti ti-id-badge"></i>
+      </div>
+    </div>
+
+    <!-- Bottom status bar -->
+    <div class="rs-bottom-bar">
+      <div style="display:flex;align-items:center;gap:8px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2C9 2 6.5 4.5 6.5 7.5c0 2.5 1.5 4.5 3.7 5.3L8 21h8l-2.2-8.2c2.2-.8 3.7-2.8 3.7-5.3C17.5 4.5 15 2 12 2z" fill="#c0275a"/>
+        </svg>
+        <span>Powered by PlumPOS</span>
+        <span style="opacity:0.4">·</span>
+        <span>Register 1</span>
+        <span style="opacity:0.4">ℹ</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span id="rs-time-display"></span>
+        <div class="rs-primary-badge">PRIMARY</div>
+      </div>
+    </div>
+
+    <button class="rs-helpdesk" style="position:absolute;bottom:40px;left:16px">Help Desk</button>
+  </div>
+</div>
+
+<!-- TERMINATE CONFIRM MODAL -->
+<div class="rs-confirm-backdrop" id="rs-confirm">
+  <div class="rs-confirm-box">
+    <div class="rs-confirm-icon">
+      <i class="ti ti-plug-x"></i>
+    </div>
+    <div class="rs-confirm-title">Terminate Remote Session?</div>
+    <div class="rs-confirm-sub" id="rs-confirm-sub">
+      This will immediately disconnect the remote session for <strong id="rs-confirm-device" style="color:white"></strong>. The device will return to its normal state.
+    </div>
+    <div class="rs-confirm-actions">
+      <button class="rs-cancel-btn" onclick="cancelTerminate()">Cancel</button>
+      <button class="rs-confirm-terminate-btn" onclick="confirmTerminate()">
+        <i class="ti ti-plug-x" style="font-size:12px"></i> Terminate
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const deviceTypes = [
+  { name: 'Plum POS', icon: 'ti-device-desktop' },
+  { name: 'Plum KIOSK', icon: 'ti-device-tablet' },
+  { name: 'Plum Handheld', icon: 'ti-device-mobile' },
+  { name: 'Plum KDS', icon: 'ti-layout-list' },
+  { name: 'Plum Clock', icon: 'ti-clock' },
+  { name: 'Plum Digital Signage', icon: 'ti-tv' },
+  { name: 'Plum Tunes', icon: 'ti-music' },
+];
+
+const allDevices = [
+  { franchise: 'Bojangles', fClass: 'f-bojangles', store: 'Charlotte Downtown #1045', storeId: '#1045', deviceId: 'DEV-1045-01', deviceName: 'Front Desk POS', ip: '10.0.12.15', type: 'Plum POS', status: 'Online' },
+  { franchise: 'Biscuitville', fClass: 'f-biscuitville', store: 'Raleigh West #2099', storeId: '#2099', deviceId: 'DEV-2099-01', deviceName: 'Primary POS Register', ip: '172.16.42.10', type: 'Plum POS', status: 'Online' },
+  { franchise: 'Bojangles', fClass: 'f-bojangles', store: 'Bojangles Corporate Lab', storeId: '#3378', deviceId: 'DEV-3378-01', deviceName: 'Main POS Register 1', ip: '192.168.1.101', type: 'Plum POS', status: 'Offline' },
+  { franchise: 'Cook Out', fClass: 'f-cookout', store: 'Atlanta East #5011', storeId: '#5011', deviceId: 'DEV-5011-01', deviceName: 'POS Terminal Back', ip: '192.168.4.22', type: 'Plum POS', status: 'Online' },
+  { franchise: 'Mooyah', fClass: 'f-mooyah', store: 'Mooyah #204 Alliance', storeId: '#204', deviceId: 'DEV-0204-01', deviceName: 'Kiosk Station 1', ip: '10.0.5.11', type: 'Plum KIOSK', status: 'Online' },
+  { franchise: 'Mooyah', fClass: 'f-mooyah', store: 'Mooyah #351 Hollyhock', storeId: '#351', deviceId: 'DEV-0351-01', deviceName: 'Handheld Unit A', ip: '192.168.2.45', type: 'Plum Handheld', status: 'Offline' },
+  { franchise: 'Mooyah', fClass: 'f-mooyah', store: 'Mooyah #353 Dallas Fort Worth', storeId: '#353', deviceId: 'DEV-0353-01', deviceName: 'Handheld Unit B', ip: '192.168.2.60', type: 'Plum Handheld', status: 'Online' },
+  { franchise: 'Bojangles', fClass: 'f-bojangles', store: 'Charlotte Downtown #1045', storeId: '#1045', deviceId: 'DEV-1045-02', deviceName: 'Kitchen Display', ip: '10.0.12.20', type: 'Plum KDS', status: 'Online' },
+  { franchise: 'Biscuitville', fClass: 'f-biscuitville', store: 'Raleigh West #2099', storeId: '#2099', deviceId: 'DEV-2099-02', deviceName: 'Time Clock Station', ip: '172.16.42.20', type: 'Plum Clock', status: 'Online' },
+  { franchise: 'Cook Out', fClass: 'f-cookout', store: 'Atlanta East #5011', storeId: '#5011', deviceId: 'DEV-5011-02', deviceName: 'Digital Sign - Front', ip: '192.168.4.30', type: 'Plum Digital Signage', status: 'Offline' },
+  { franchise: 'Mooyah', fClass: 'f-mooyah', store: 'Mooyah Lab', storeId: '#LAB', deviceId: 'DEV-LAB-01', deviceName: 'Plum Tunes Player', ip: '10.10.0.5', type: 'Plum Tunes', status: 'Online' },
+];
+
+const cols = [
+  { key: 'franchise', label: 'Franchise Name', w: '11%' },
+  { key: 'store', label: 'Store Name', w: '18%' },
+  { key: 'deviceId', label: 'Device ID', w: '11%' },
+  { key: 'deviceName', label: 'Device Name', w: '15%' },
+  { key: 'ip', label: 'Device IP', w: '11%' },
+  { key: 'status', label: 'Status', w: '8%' },
+  { key: '_reboot', label: 'Reboot Device', w: '13%', noSort: true },
+  { key: '_session', label: 'Remote Session', w: '13%', noSort: true },
+];
+
+let currentType = '', sortCol = '', sortDir = 'asc';
+let selectedFranchises = new Set(), selectedStores = new Set();
+let sortPanelEl = null;
+let currentSessionDevice = null;
+let pinVal = '';
+
+/* ── CLOCK ── */
+function updateClock() {
+  const now = new Date();
+  const t = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+  const d = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  const el = document.getElementById('rs-time-display');
+  if (el) el.textContent = `${d}, ${t} EST`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* ── REMOTE SESSION ── */
+function doSession(deviceId) {
+  const dev = allDevices.find(d => d.deviceId === deviceId);
+  if (!dev) return;
+  currentSessionDevice = dev;
+  pinVal = '';
+  renderPinDots();
+  document.getElementById('rs-device-name').textContent = `${dev.deviceId} — ${dev.deviceName}`;
+  document.getElementById('rs-device-meta').textContent = `${dev.store}  ·  ${dev.ip}  ·  ${dev.type}`;
+  // update header on pin screen
+  const storeNum = dev.storeId.replace('#', '').padStart(6, '0');
+  document.getElementById('rs-pin-header').innerHTML = `
+    <div class="rs-pin-store-name">${storeNum}, ${dev.store}</div>
+    <div class="rs-pin-store-id">${dev.storeId.replace('#', '')}</div>`;
+  document.getElementById('rs-overlay').classList.add('open');
+}
+
+function askTerminate() {
+  if (!currentSessionDevice) return;
+  document.getElementById('rs-confirm-device').textContent = `${currentSessionDevice.deviceId} — ${currentSessionDevice.deviceName}`;
+  document.getElementById('rs-confirm').classList.add('open');
+}
+function cancelTerminate() {
+  document.getElementById('rs-confirm').classList.remove('open');
+}
+function confirmTerminate() {
+  document.getElementById('rs-confirm').classList.remove('open');
+  document.getElementById('rs-overlay').classList.remove('open');
+  showToast(`Session terminated for ${currentSessionDevice.deviceId}`);
+  currentSessionDevice = null;
+  pinVal = '';
+}
+
+/* ── PIN PAD ── */
+function pinKey(k) {
+  if (pinVal.length >= 6) return;
+  pinVal += k;
+  renderPinDots();
+}
+function pinDelete() { pinVal = pinVal.slice(0, -1); renderPinDots(); }
+function pinClear() { pinVal = ''; renderPinDots(); }
+function pinAccept() { if (pinVal.length > 0) showToast('PIN submitted — authenticating…'); }
+function renderPinDots() {
+  document.getElementById('rs-pin-dots').innerHTML =
+    Array.from({ length: pinVal.length }, () => '<div class="rs-dot"></div>').join('');
+}
+
+/* ── DEVICE GRID ── */
+function getFranchisesForType(t) {
+  return [...new Set(allDevices.filter(d => d.type === t).map(d => d.franchise))].sort();
+}
+function getStoresForFranchises(t, f) {
+  return [...new Set(allDevices.filter(d => d.type === t && (f.size === 0 || f.has(d.franchise))).map(d => d.store))].sort();
+}
+
+function buildGrid() {
+  document.getElementById('device-grid').innerHTML = deviceTypes.map(d => `
+    <div class="device-card" onclick="openDevice('${d.name}')">
+      <div class="icon-wrap"><i class="ti ${d.icon}" style="font-size:26px;color:#c0275a"></i></div>
+      <div class="name">${d.name}</div>
+    </div>`).join('');
+}
+
+function toggleDD(e, id) {
+  e.stopPropagation();
+  const p = document.getElementById(id);
+  const was = p.classList.contains('open');
+  closeAllPanels();
+  if (!was) p.classList.add('open');
+}
+function closeAllPanels() {
+  document.querySelectorAll('.dd-panel').forEach(p => p.classList.remove('open'));
+}
+document.addEventListener('click', () => { closeAllPanels(); closeSortPanel(); });
+
+function buildFranchiseList(filter = '') {
+  document.getElementById('franchise-list').innerHTML = getFranchisesForType(currentType)
+    .filter(x => x.toLowerCase().includes(filter.toLowerCase()))
+    .map(x => `<label class="dd-item">
+      <input type="checkbox" ${selectedFranchises.has(x) ? 'checked' : ''} onchange="toggleFranchise('${x}',this.checked)"/> ${x}
+    </label>`).join('');
+}
+function buildStoreList(filter = '') {
+  document.getElementById('store-list').innerHTML = getStoresForFranchises(currentType, selectedFranchises)
+    .filter(x => x.toLowerCase().includes(filter.toLowerCase()))
+    .map(x => `<label class="dd-item">
+      <input type="checkbox" ${selectedStores.has(x) ? 'checked' : ''} onchange="toggleStore('${x}',this.checked)"/> ${x}
+    </label>`).join('');
+}
+
+function toggleFranchise(f, c) { c ? selectedFranchises.add(f) : selectedFranchises.delete(f); selectedStores.clear(); updateFranchiseLabel(); buildStoreList(); updateStoreLabel(); }
+function selAllFranchises() { getFranchisesForType(currentType).forEach(f => selectedFranchises.add(f)); buildFranchiseList(); updateFranchiseLabel(); buildStoreList(); updateStoreLabel(); }
+function clrFranchises() { selectedFranchises.clear(); buildFranchiseList(); updateFranchiseLabel(); selectedStores.clear(); buildStoreList(); updateStoreLabel(); }
+function toggleStore(s, c) { c ? selectedStores.add(s) : selectedStores.delete(s); updateStoreLabel(); }
+function selAllStores() { getStoresForFranchises(currentType, selectedFranchises).forEach(s => selectedStores.add(s)); buildStoreList(); updateStoreLabel(); }
+function clrStores() { selectedStores.clear(); buildStoreList(); updateStoreLabel(); }
+
+function updateFranchiseLabel() {
+  const all = getFranchisesForType(currentType);
+  const l = document.getElementById('franchise-label');
+  if (!selectedFranchises.size || selectedFranchises.size === all.length) l.textContent = 'All Franchises';
+  else if (selectedFranchises.size === 1) l.textContent = [...selectedFranchises][0];
+  else l.textContent = `${selectedFranchises.size} franchises`;
+}
+function updateStoreLabel() {
+  const avail = getStoresForFranchises(currentType, selectedFranchises);
+  const l = document.getElementById('store-label');
+  if (!selectedStores.size || selectedStores.size === avail.length) l.textContent = 'All Stores';
+  else if (selectedStores.size === 1) l.textContent = [...selectedStores][0];
+  else l.textContent = `${selectedStores.size} stores`;
+}
+
+function showHome() {
+  document.getElementById('home-page').classList.add('active');
+  document.getElementById('device-page').classList.remove('active');
+  document.getElementById('breadcrumb').innerHTML = `
+    <span class="bc-link" onclick="showHome()">Dashboard</span>
+    <span>›</span>
+    <span class="bc-active">Plum Desk</span>`;
+}
+
+function openDevice(name) {
+  currentType = name; sortCol = ''; sortDir = 'asc';
+  document.getElementById('text-filter').value = '';
+  selectedFranchises.clear(); selectedStores.clear();
+  document.getElementById('home-page').classList.remove('active');
+  document.getElementById('device-page').classList.add('active');
+  document.getElementById('device-page-title').textContent = name;
+  document.getElementById('breadcrumb').innerHTML = `
+    <span class="bc-link" onclick="showHome()">Dashboard</span><span>›</span>
+    <span class="bc-link" onclick="showHome()">Plum Desk</span><span>›</span>
+    <span class="bc-active">${name}</span>`;
+  buildFranchiseList(); updateFranchiseLabel(); buildStoreList(); updateStoreLabel();
+  renderTable();
+}
+
+function applyFilter() { document.getElementById('text-filter').value = ''; closeAllPanels(); renderTable(); }
+
+function renderTable() {
+  let data = allDevices.filter(d => d.type === currentType);
+  if (selectedFranchises.size) data = data.filter(d => selectedFranchises.has(d.franchise));
+  if (selectedStores.size) data = data.filter(d => selectedStores.has(d.store));
+  const txt = document.getElementById('text-filter').value.toLowerCase();
+  if (txt) data = data.filter(d =>
+    d.franchise.toLowerCase().includes(txt) || d.store.toLowerCase().includes(txt) ||
+    d.deviceId.toLowerCase().includes(txt) || d.deviceName.toLowerCase().includes(txt) ||
+    d.ip.toLowerCase().includes(txt) || d.status.toLowerCase().includes(txt));
+  if (sortCol && sortCol !== '_reboot' && sortCol !== '_session')
+    data = [...data].sort((a, b) => sortDir === 'asc' ? (a[sortCol] || '').localeCompare(b[sortCol] || '') : (b[sortCol] || '').localeCompare(a[sortCol] || ''));
+  document.getElementById('result-count').textContent = `${data.length} device${data.length !== 1 ? 's' : ''}`;
+  buildTableHead(); buildTableBody(data);
+}
+
+function buildTableHead() {
+  document.getElementById('table-head').innerHTML = `<tr>${cols.map(c => `
+    <th style="width:${c.w}" class="${c.noSort ? 'no-sort' : ''}${sortCol === c.key ? ' col-sort-active' : ''}"
+      ${c.noSort ? '' : ` onclick="openSortPanel(event,'${c.key}')"`}>
+      <div class="sort-wrap">${c.label}${c.noSort ? '' : `
+        <div class="sort-icon ${sortCol === c.key ? sortDir : ''}">
+          <div class="arr-up"></div><div class="arr-down"></div>
+        </div>`}
+      </div>
+    </th>`).join('')}</tr>`;
+}
+
+function buildTableBody(data) {
+  if (!data.length) {
+    document.getElementById('table-body').innerHTML = `<tr><td colspan="8"><div class="empty-state">No devices found</div></td></tr>`;
+    return;
+  }
+  document.getElementById('table-body').innerHTML = data.map(d => {
+    const off = d.status === 'Offline';
+    return `<tr>
+      <td><span class="franchise-badge ${d.fClass}">${d.franchise}</span></td>
+      <td>
+        <div style="font-weight:500;font-size:12.5px">${d.store}</div>
+        <div style="font-size:11px;color:#6b7280">Store ID: ${d.storeId}</div>
+      </td>
+      <td><span class="device-id">${d.deviceId}</span></td>
+      <td>${d.deviceName}</td>
+      <td><span class="ip-code">${d.ip}</span></td>
+      <td>${off
+        ? '<span class="status-offline"><span class="dot-red"></span>Offline</span>'
+        : '<span class="status-online"><span class="dot-green"></span>Online</span>'}</td>
+      <td>
+        <button class="btn-reboot" onclick="doReboot('${d.deviceId}')" ${off ? 'disabled' : ''}>
+          <i class="ti ti-refresh" style="font-size:11px"></i> Reboot
+        </button>
+      </td>
+      <td>
+        <button class="btn-session" onclick="doSession('${d.deviceId}')" ${off ? 'disabled' : ''}>
+          <i class="ti ti-device-desktop" style="font-size:11px"></i> Remote Session
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openSortPanel(e, col) {
+  e.stopPropagation(); closeSortPanel(); closeAllPanels();
+  const th = e.currentTarget;
+  const tw = document.getElementById('table-wrap');
+  const panel = document.createElement('div');
+  panel.className = 'sort-panel open';
+  const r = th.getBoundingClientRect(), wr = tw.getBoundingClientRect();
+  panel.style.cssText = `top:${r.bottom - wr.top}px;left:${r.left - wr.left}px`;
+  panel.innerHTML = `
+    <div class="sp-item ${sortCol === col && sortDir === 'asc' ? 'active' : ''}" onclick="setSort('${col}','asc')">
+      <i class="ti ti-sort-ascending" style="font-size:14px"></i> Sort Ascending
+    </div>
+    <div class="sp-item ${sortCol === col && sortDir === 'desc' ? 'active' : ''}" onclick="setSort('${col}','desc')">
+      <i class="ti ti-sort-descending" style="font-size:14px"></i> Sort Descending
+    </div>
+    <div class="sp-sep"></div>
+    <div class="sp-filter-label">Text Filter</div>
+    <input class="sp-filter-input" placeholder="Search..." oninput="setColFilter(this.value)" onclick="event.stopPropagation()"/>`;
+  tw.appendChild(panel); sortPanelEl = panel;
+  panel.addEventListener('click', e => e.stopPropagation());
+}
+function closeSortPanel() { if (sortPanelEl) { sortPanelEl.remove(); sortPanelEl = null; } }
+function setSort(col, dir) { sortCol = col; sortDir = dir; closeSortPanel(); renderTable(); }
+function setColFilter(v) { document.getElementById('text-filter').value = v; renderTable(); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerHTML = `<i class="ti ti-check" style="font-size:14px;color:#3bb273"></i> ${msg}`;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+function doReboot(id) { showToast(`Reboot command sent to ${id}`); }
+
+buildGrid();
+</script>
+</body>
+</html>
